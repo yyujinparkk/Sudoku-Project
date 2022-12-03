@@ -292,7 +292,7 @@ def generate_sudoku(size, removed):
 def main():
     board = SudokuGenerator(9, 0)
     board.fill_diagonal()
-    '''board.fill_remaining(0, 3)'''
+    board.fill_remaining(0, 3)
     board.print_board()
 
 
