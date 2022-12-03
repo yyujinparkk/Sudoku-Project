@@ -6,7 +6,6 @@ https://www.geeksforgeeks.org/program-sudoku-generator/
 
 """
 
-
 class SudokuGenerator:
     '''
    create a sudoku board - initialize class variables and set up the 2D board
@@ -75,7 +74,6 @@ class SudokuGenerator:
                 return False
         return True
 
-
     '''
    Determines if num is contained in the specified column (vertical) of the board
     If num is already in the specified col, return False. Otherwise, return True
@@ -108,11 +106,10 @@ class SudokuGenerator:
     '''
 
     def valid_in_box(self, row_start, col_start, num):
-
-        three_by_three = [self.board[i][row_start:row_start+3] for i in range(col_start,col_start+3)]
-        for i in three_by_three:
-            if i == num:
-                return False
+        for j in range(row_start, row_start + 2):
+            for i in range(col_start, col_start + 2):
+                if self.board[j][i] == num:
+                    return False
         return True
 
     '''
@@ -127,22 +124,18 @@ class SudokuGenerator:
     '''
 
     def is_valid(self, row, col, num):
-
         if row <= 2:
             row_start = 0
-
         elif row <= 5:
             row_start = 3
-
-        elif row <= 8:
+        else:
             row_start = 6
 
         if col <= 2:
             col_start = 0
         elif col <= 5:
             col_start = 3
-
-        elif col <= 8:
+        else:
             col_start = 6
 
         if self.valid_in_box(row_start, col_start, num) == False:
@@ -153,11 +146,6 @@ class SudokuGenerator:
             return False
         else:
             return True
-
-
-
-
-
 
     '''
     Fills the specified 3x3 box with values
@@ -260,16 +248,13 @@ class SudokuGenerator:
     '''
 
     def remove_cells(self):
-        rise = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-        run = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         count = 0
         while count < self.removed_cells:
-            ran_rise = random.choice(rise)
-            ran_run = random.choice(run)
-            if self.board[ran_rise][ran_run] != 0:
-                self.board[ran_rise][ran_run] = 0
+            rand1 = random.randint(0, 8)
+            rand2 = random.randint(0, 8)
+            if self.board[rand1][rand2] != 0:
+                self.board[rand1][rand2] = 0
                 count += 1
-
 
 '''
 DO NOT CHANGE
@@ -287,7 +272,6 @@ removed is the number of cells to clear (set to 0)
 Return: list[list] (a 2D Python list to represent the board)
 '''
 
-
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
@@ -296,14 +280,12 @@ def generate_sudoku(size, removed):
     board = sudoku.get_board()
     return board
 
-
 def main():
     board = SudokuGenerator(9, 30)
     board.fill_diagonal()
     board.fill_remaining(0, 3)
     board.remove_cells()
     board.print_board()
-
 
 if __name__ == '__main__':
     main()
