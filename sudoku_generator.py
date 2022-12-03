@@ -260,7 +260,15 @@ class SudokuGenerator:
     '''
 
     def remove_cells(self):
-        pass
+        rise = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        run = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        count = 0
+        while count < self.removed_cells:
+            ran_rise = random.choice(rise)
+            ran_run = random.choice(run)
+            if self.board[ran_rise][ran_run] != 0:
+                self.board[ran_rise][ran_run] = 0
+                count += 1
 
 
 '''
