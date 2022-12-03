@@ -298,9 +298,10 @@ def generate_sudoku(size, removed):
 
 
 def main():
-    board = SudokuGenerator(9, 0)
+    board = SudokuGenerator(9, 30)
     board.fill_diagonal()
     board.fill_remaining(0, 3)
+    board.remove_cells()
     board.print_board()
 
 
