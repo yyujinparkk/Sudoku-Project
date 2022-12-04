@@ -1,82 +1,82 @@
-import math
-import random
+import math  # library needed to use sqrt to get box_length
+import random  # library needed to generate random integers
 
 
-class SudokuGenerator:
+class SudokuGenerator:  # holds all functions in a class which can be used to generate a puzzle
 
-    def __init__(self, row_length, removed_cells):  # Initializes row_length, removed_cells, the board, and box_length
-        self.row_length = row_length
-        self.removed_cells = removed_cells
-        self.board = [[0 for i in range(self.row_length)] for j in range(self.row_length)]  # Creates a 2D list of 0s
-        self.box_length = int(math.sqrt(self.row_length))  # Converts the square root float value into an integer
+    def __init__(self, row_length, removed_cells):  # constructor function
+        self.row_length = row_length  # initializes row_length as a variable
+        self.removed_cells = removed_cells  # initializes removed_cells as a variable
+        self.board = [[0 for i in range(self.row_length)] for j in range(self.row_length)]
+        # variable which holds the 9x9 board
+        self.box_length = int(math.sqrt(self.row_length))
+        # box size will always be 3x3 since row_length is stored at 9x9
 
-    def get_board(self):  # Returns the board which is a 2D list of numbers
-        return self.board
+    def get_board(self):  # function which updates and fetched current board, also can print it
+        return self.board  # returns it if you would like to print it
 
-    def print_board(self):  # Prints the board out by iterating through the whole list then sub-lists
-        for i in self.board:
-            for j in i:
-                print(j, end=" ")
-            print()
-        return
+    def valid_in_row(self, row, num):  # determines if the parameter num is anywhere in the parameter row, rows
+        # represent which sublist
+        for j in range(len(self.board[0])):  # loop which lets us go through different sub lists
+            if self.board[row][j] == num:  # if any specific index equals the num parameter, return False
+                return False  # means the num is not valid in this spot
+        return True  # 1/3 of parts proving num is valid in this spot
 
-    def valid_in_row(self, row, num):  # Iterates through each index of the given sublist checking if num appears
-        for j in range(len(self.board[0])):
-            if self.board[row][j] == num:
-                return False
-        return True
+    def valid_in_col(self, col, num):  # determines if the parameter num is anywhere in the parameter col, cols
+        # represent a specific index of every list
+        for i in range(len(self.board)):  # goes through every sub lists selected index
+            if self.board[i][col] == num:  # if any of the col equals the num parameter, return False
+                return False  # means the num is not valid in this spot
+        return True  # 2/3 of parts proving num is valid in this spot
 
-    def valid_in_col(self, col, num):  # Iterates through all sub-lists checking if num appears in the given index
-        for i in range(len(self.board)):
-            if self.board[i][col] == num:
-                return False
-        return True
+    def valid_in_box(self, row_start, col_start, num):  # determines if the parameter num is valid in the correct
+        # 3x3 box
+        for j in range(row_start, row_start + 3):  # goes through the first box rows and then iterates 2nd and 3rd
+            for i in range(col_start, col_start + 3):  # goes through the first box cols and then iterates 2nd and 3rd
+                if self.board[j][i] == num:  # if any number in the box equals the num parameter, Return False
+                    return False  # means the num is not valid in this spot
+        return True  # 3/3 of parts proving num is valid in this spot
 
-    def valid_in_box(self, row_start, col_start, num):  # Checks indexes of given row/column to end of box for num
-        for j in range(row_start, row_start + 3):
-            for i in range(col_start, col_start + 3):
-                if self.board[j][i] == num:
-                    return False
-        return True
+    def is_valid(self, row, col, num):  # function used to test if parameter num satisfies all requirements of validity
+        # at the parameter row and col
+        a = self.valid_in_row(row, num)  # calls valid_in_row to test row validity
+        b = self.valid_in_col(col, num)  # calls valid_in_col to test col validity
+        if row < 3:  # allows you to iterate at the start of the box you're currently in
+            row_start = 0  # the 0 row index is the start of the three boxes in the top row
+        elif row < 6:  # allows you to iterate at the start of the box you're currently in
+            row_start = 3  # the 3 row index is the start of the three boxes in the middle row
+        else:  # allows you to iterate at the start of the box you're currently in
+            row_start = 6  # the 6 row index is the start of the three boxes in the bottom row
+        if col < 3:  # allows you to iterate at the start of the box you're currently in
+            col_start = 0  # the 0 col index is the start of the three boxes in the left row
+        elif col < 6:  # allows you to iterate at the start of the box you're currently in
+            col_start = 3  # the 3 col index is the start of the three boxes in the middle row
+        else:  # allows you to iterate at the start of the box you're currently in
+            col_start = 6  # the 6 col index is the start of the three boxes in the right row
+        c = self.valid_in_box(row_start, col_start, num)  # calls valid_in_box with the starting box indexes
+        if a and b and c:  # if all functions return true, then return True
+            return True  # means the number is completely valid in this place on the board
+        else:  # if even one of the functions return false, then return False
+            return False  # means the number is not valid in this place on the board
 
-    def is_valid(self, row, col, num):  # valid_in_row() valid_in_col() and valid_in_box() to check if an input is valid
-        a = self.valid_in_row(row, num)
-        b = self.valid_in_col(col, num)
-        if row < 3:  # Based on given row determines where row_start will be for valid_in_box()
-            row_start = 0
-        elif row < 6:
-            row_start = 3
-        else:
-            row_start = 6
+    def fill_box(self, row_start, col_start):  # function which allows random, non-repeating numbers to be placed in the
+        # boxes along the diagonals of the board
+        rand_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]  # list which removed numbers after they are randomly selected so that,
+        # they can't reappear.
+        for j in range(row_start, row_start + 3):  # allows us to iterate through rows the parameter row_start defines
+            for i in range(col_start, col_start + 3):  # allows us to iterate indexes of the sub lists the parameter
+                # col_start defines
+                rand_num = random.choice(rand_list)  # randomly selects a number from the rand_list
+                rand_list.remove(rand_num)  # removes number selected above from rand_list
+                self.board[j][i] = rand_num  # changes the board specific row and col to equal the number selected above
+        return self.board  # returns/changes the board and allows it to be re-printed if called
 
-        if col < 3:  # Based on given col determines where col_start will be for valid_in_box()
-            col_start = 0
-        elif col < 6:
-            col_start = 3
-        else:
-            col_start = 6
+    def fill_diagonal(self):  # calls fill_box to the fill the boxes along the diagonal
+        self.fill_box(0, 0)  # fills top left 3x3 box
+        self.fill_box(3, 3)  # fills dead center 3x3 box
+        self.fill_box(6, 6)  # fills bottom right 3x3 box
 
-        c = self.valid_in_box(row_start, col_start, num)
-        if a and b and c:  # Checks all 3 functions stored a, b, and c if all return True function returns True
-            return True
-        else:
-            return False
-
-    def fill_box(self, row_start, col_start):  # Uses a list of numbers from 1-9 to check whether the num has been used
-        rand_list = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        for j in range(row_start, row_start + 3):
-            for i in range(col_start, col_start + 3):  # Iterates through 2D list and sub-lists
-                rand_num = random.choice(rand_list)  # Makes a random choice from rand_list
-                rand_list.remove(rand_num)  # Removes whatever selection from rand_list was made, so it cannot be reused
-                self.board[j][i] = rand_num  # Replaces position in board with the given number selected
-        return self.board
-
-    def fill_diagonal(self):  # Calls the fill_box() method at the correct indexes to fill the boxes along diagonal
-        self.fill_box(0, 0)
-        self.fill_box(3, 3)
-        self.fill_box(6, 6)
-
-    def fill_remaining(self, row, col):  # Given function that fills remaining values of board after diagonal filled
+    def fill_remaining(self, row, col):  # provided function
         if col >= self.row_length and row < self.row_length - 1:
             row += 1
             col = 0
@@ -103,24 +103,24 @@ class SudokuGenerator:
                 self.board[row][col] = 0
         return False
 
-    def fill_values(self):  # Given function that calls both fill_diagonal() and fill_remaining()
-        self.fill_diagonal()
-        self.fill_remaining(0, self.box_length)
+    def fill_values(self):  # provided function
+        self.fill_diagonal()  # calls fill_diagonal function
+        self.fill_remaining(0, self.box_length)  # calls fill_remaining function
 
-    def remove_cells(self):  # Uses a counter to determine when the correct number of cells has been removed
-        count = 0
-        while count < self.removed_cells:  # While the loop is True randomly generates positions within the board
-            rand1 = random.randint(0, 8)
-            rand2 = random.randint(0, 8)
-            if self.board[rand1][rand2] != 0:  # If selected position is not 0 will make it 0 and add to counter
-                self.board[rand1][rand2] = 0
-                count += 1
+    def remove_cells(self):  # function used to remove cells based on difficulty level
+        count = 0  # counter representing how many cells have been removed
+        while count < self.removed_cells:  # if counter exceeds the difficulty value of removed cells
+            rand1 = random.randint(0, 8)  # allows us to randomly select a row (sublist)
+            rand2 = random.randint(0, 8)  # allows us to randomly select a col (index in sublist)
+            if self.board[rand1][rand2] != 0:  # whichever row and index are selected, if value is not zero, remove cell
+                self.board[rand1][rand2] = 0  # sets selected row and index value equal to zero
+                count += 1  # if a cell is successfully removed, increment the counter by one
 
 
-def generate_sudoku(size, removed):
-    sudoku = SudokuGenerator(size, removed)
-    sudoku.fill_values()
-    board = sudoku.get_board()
-    sudoku.remove_cells()
-    board = sudoku.get_board()
-    return board
+def generate_sudoku(size, removed):  # provided function
+    sudoku = SudokuGenerator(size, removed)  # generates board using class SudokuGenerator constructor
+    sudoku.fill_values()  # calls fill_values to fill board entirely
+    board = sudoku.get_board()  # retrieves board representing a filled out Sudoku puzzle (possible solution)
+    sudoku.remove_cells()  # calls remove_cells to remove a set number of cells based on selected difficulty
+    board = sudoku.get_board()  # retrieves board representing a puzzle that is solvable at specific difficulty
+    return board  # returns the board allowing it to be printed if called
