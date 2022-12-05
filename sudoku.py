@@ -6,11 +6,12 @@ pygame.init()
 pygame.display.set_caption("Sudoku")
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 num_font = pygame.font.Font(None, 40)  # Need an effective font size
-
+game_over_font = pygame.font.Font(None, 40
+                                  )
 board = generate_sudoku(9, 50)  # Need to be variable implemented somehow for different difficulties
 
-#  Vid one for draw_grid and draw_nums
 
+#  Vid one for draw_grid and draw_nums
 
 def draw_grid():
     for i in range(1, BOARD_ROWS):
@@ -76,7 +77,14 @@ def draw_nums():
 
 def draw_game_over():
     screen.fill(BG_COLOR)
-
+    if board == board:
+        end_text = f"Game Won!"
+    else:
+        end_text = f"Game Over :("
+    end_surf = game_over_font.render(end_text, 0, LINE_COLOR)
+    end_rect = end_surf.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+    screen.blit(end_surf, end_rect)
+    #  Implement button creation and make restart game in event loop (vid 3)
 
 screen.fill(BG_COLOR)
 draw_grid()
